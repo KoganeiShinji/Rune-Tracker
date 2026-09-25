@@ -1,217 +1,708 @@
-<!DOCTYPE html>
-<html lang="ru">
+!DOCTYPE html>
+<html lang="ru" class="dark">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PoE 2 - Verisium Remnant Runes (Fubgun Strat)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Cinzel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        poe: {
+                            bg: '#0a0a0d',
+                            card: '#13131a',
+                            border: '#2a2a38',
+                            accent: '#d4a373',
+                            accentHover: '#e0b588',
+                            purple: '#9d4edd',
+                            blue: '#3a86ff',
+                            gold: '#ffb703',
+                            darkGold: '#b8860b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f0f12;
+            background-color: #09090c;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(212, 163, 115, 0.08) 0%, transparent 70%),
+                radial-gradient(circle at 10% 90%, rgba(157, 78, 221, 0.05) 0%, transparent 50%);
             color: #e2e8f0;
-            padding: 20px;
-            margin: 0;
         }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+
+        .poe-border-glow {
+            box-shadow: 0 0 15px rgba(212, 163, 115, 0.15);
+            border: 1px solid rgba(212, 163, 115, 0.3);
         }
-        h1 {
-            color: #d4a373;
-            text-align: center;
-            font-size: 22px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
+
+        .tier-ss-glow {
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.25);
+            border-color: rgba(255, 51, 102, 0.5);
         }
-        .subtitle {
-            text-align: center;
-            color: #a0aec0;
-            font-size: 14px;
-            margin-bottom: 25px;
+
+        .tier-s-glow {
+            box-shadow: 0 0 12px rgba(255, 159, 67, 0.2);
+            border-color: rgba(255, 159, 67, 0.4);
         }
-        .table-container {
-            background-color: #15151a;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-            overflow: hidden;
-            border: 1px solid #2d2d39;
+
+        /* Tier Specific Colors */
+        .badge-ss { background: rgba(255, 51, 102, 0.15); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.4); text-shadow: 0 0 8px rgba(255,51,102,0.5); }
+        .badge-s { background: rgba(255, 159, 67, 0.15); color: #ff9f43; border: 1px solid rgba(255, 159, 67, 0.4); }
+        .badge-a { background: rgba(255, 235, 59, 0.15); color: #ffeb3b; border: 1px solid rgba(255, 235, 59, 0.4); }
+        .badge-b { background: rgba(162, 155, 254, 0.15); color: #a29bfe; border: 1px solid rgba(162, 155, 254, 0.4); }
+        .badge-c { background: rgba(116, 185, 255, 0.15); color: #74b9ff; border: 1px solid rgba(116, 185, 255, 0.4); }
+
+        .row-checked {
+            background-color: rgba(27, 46, 30, 0.6) !important;
+            border-left: 3px solid #2ecc71;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-        th, td {
-            padding: 14px 18px;
-            border-bottom: 1px solid #23232b;
+        ::-webkit-scrollbar-track {
+            background: #0f0f14;
         }
-        th {
-            background-color: #1c1c24;
-            color: #d4a373;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 0.5px;
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a38;
+            border-radius: 4px;
         }
-        tr {
-            cursor: pointer;
-            transition: background-color 0.15s ease;
-        }
-        tr:hover {
-            background-color: #1e1e26;
-        }
-        /* Стиль для отмеченной (взятой) руны */
-        tr.checked-row {
-            background-color: #1b2e1e !important;
-        }
-        tr.checked-row td {
-            color: #a3b899;
-        }
-        tr.checked-row .note {
-            color: #718096 !important;
-        }
-        .tier-SS { color: #ff3366; font-weight: bold; text-shadow: 0 0 10px rgba(255,51,102,0.3); }
-        .tier-S { color: #ff9f43; font-weight: bold; }
-        .tier-A { color: #ffeb3b; font-weight: bold; }
-        .tier-B { color: #a29bfe; font-weight: bold; }
-        .tier-C { color: #74b9ff; font-weight: bold; }
-        
-        .note {
-            font-size: 13px;
-            color: #a0aec0;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-        .checkbox-cell {
-            text-align: center;
-            width: 60px;
-            pointer-events: none; /* Клик ловит вся строка */
-        }
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #2ecc71;
-            cursor: pointer;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4a373;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen font-sans pb-12 antialiased selection:bg-poe-accent selection:text-black">
 
-<div class="container">
-    <h1>Verisium Remnants: Приоритет Рун</h1>
-    <div class="subtitle">По гайду Fubgun (Кликните в любое место строки, чтобы отметить руну)</div>
+    <!-- Header -->
+    <header class="border-b border-poe-border bg-black/40 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-amber-950/60 border border-poe-accent flex items-center justify-center text-poe-accent shadow-md">
+                    <i class="fa-solid fa-gem text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif text-xl md:text-2xl font-bold tracking-wider text-poe-accent">
+                        PoE 2 Verisium Remnants
+                    </h1>
+                    <p class="text-xs text-gray-400">Приоритет и Стратегия Рун (Гайд Fubgun)</p>
+                </div>
+            </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th class="checkbox-cell">Взята</th>
-                    <th style="width: 100px;">Тир</th>
-                    <th style="width: 220px;">Название руны</th>
-                    <th>Стратегия и примечание</th>
-                </tr>
-            </thead>
-            <tbody id="runeTableBody">
-                <!-- SS-TIER -->
-                <tr data-rune-id="opulent">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-SS">SS Tier</td>
-                    <td><b>Opulent Rune</b></td>
-                    <td>
-                        <div class="note" style="color: #ffb3c6;"><b>Абсолютный топ.</b> Если у вас длинная цепочка из 8-9 рун в конце, и на ней есть Opulent, можно завершать крафт на этом, даже если нет рун на пролиферацию (распространение модов).</div>
-                    </td>
-                </tr>
+            <!-- Navigation Tabs -->
+            <div class="flex bg-poe-card border border-poe-border rounded-lg p-1 w-full md:w-auto">
+                <button id="tabTierlistBtn" onclick="switchTab('tierlist')" class="flex-1 md:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 bg-poe-accent text-black font-semibold shadow">
+                    <i class="fa-solid fa-list-check"></i> Tier List & Чеклист
+                </button>
+                <button id="tabBuilderBtn" onclick="switchTab('builder')" class="flex-1 md:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-diagram-next"></i> Калькулятор Цепочки
+                </button>
+                <button id="tabGuideBtn" onclick="switchTab('guide')" class="flex-1 md:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-book-open"></i> Шпаргалка
+                </button>
+            </div>
+        </div>
+    </header>
 
-                <!-- S-TIER -->
-                <tr data-rune-id="power">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-S">S Tier</td>
-                    <td><b>Power Rune</b></td>
-                    <td><div class="note">Высший приоритет среди фиолетовых рун. Дает мощный разгон наград.</div></td>
-                </tr>
-                <tr data-rune-id="death">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-S">S Tier</td>
-                    <td><b>Death Rune</b></td>
-                    <td><div class="note">Отличная базовая пролиферация и ценность в длинных рецептах.</div></td>
-                </tr>
-                <tr data-rune-id="bond">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-S">S Tier</td>
-                    <td><b>Bond Rune</b></td>
-                    <td><div class="note">Входит в топ-3 лучших фиолетовых рун по версии Fubgun.</div></td>
-                </tr>
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-6">
 
-                <!-- A-TIER -->
-                <tr data-rune-id="time">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-A">A Tier</td>
-                    <td><b>Time Rune</b></td>
-                    <td><div class="note">Отличный выбор для средних и длинных цепочек.</div></td>
-                </tr>
-                <tr data-rune-id="oath">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-A">A Tier</td>
-                    <td><b>Oath Rune</b></td>
-                    <td><div class="note">Хороший промежуточный вариант для закрытия рецептов.</div></td>
-                </tr>
-                <tr data-rune-id="rebirth">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-A">A Tier</td>
-                    <td><b>Rebirth Rune</b></td>
-                    <td><div class="note" style="color: #ffeaa7;">Единственная синяя (Rare) руна, которая заслужила А-тир благодаря своим свойствам.</div></td>
-                </tr>
-
-                <!-- B-TIER -->
-                <tr data-rune-id="other-purple">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-B">B Tier</td>
-                    <td><b>Остальные Фиолетовые</b></td>
-                    <td><div class="note">Не особо важны. Если у вас короткая цепочка на 3-5 рун, их всегда можно просто переролить (reroll).</div></td>
-                </tr>
-
-                <!-- C-TIER -->
-                <tr data-rune-id="other-blue">
-                    <td class="checkbox-cell"><input type="checkbox"></td>
-                    <td class="tier-C">C Tier</td>
-                    <td><b>Остальные Синие</b></td>
-                    <td><div class="note">Худшие руны. Используйте только при полном отсутствии альтернатив или для закрытия неважных слотов.</div></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tbody = document.getElementById('runeTableBody');
-        const savedStates = JSON.parse(localStorage.getItem('poe2_fubgun_runes')) || {};
-        
-        // Рендерим сохраненное состояние
-        tbody.querySelectorAll('tr').forEach(row => {
-            const id = row.getAttribute('data-rune-id');
-            const checkbox = row.querySelector('input[type="checkbox"]');
+        <!-- TAB 1: TIER LIST & CHECKLIST -->
+        <section id="tabTierlist" class="space-y-6">
             
-            if (savedStates[id]) {
-                checkbox.checked = true;
-                row.classList.add('checked-row');
-            }
-            
-            // Клик в ЛЮБОЕ место строки
-            row.addEventListener('click', (e) => {
-                checkbox.checked = !checkbox.checked;
+            <!-- Controls Bar -->
+            <div class="bg-poe-card border border-poe-border rounded-xl p-4 shadow-lg flex flex-col md:flex-row gap-4 justify-between items-center">
+                <!-- Search Box -->
+                <div class="relative w-full md:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="filterRunes()" placeholder="Поиск руны или свойства..." 
+                           class="w-full bg-black/50 border border-poe-border rounded-lg pl-9 pr-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-poe-accent transition-colors">
+                </div>
+
+                <!-- Tier Filters -->
+                <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto justify-start md:justify-end">
+                    <span class="text-xs text-gray-400 mr-1">Фильтр:</span>
+                    <button onclick="setTierFilter('ALL')" class="tier-filter-btn px-2.5 py-1 rounded text-xs font-semibold bg-poe-accent text-black" data-tier="ALL">Все</button>
+                    <button onclick="setTierFilter('SS')" class="tier-filter-btn px-2.5 py-1 rounded text-xs font-semibold bg-black/40 text-rose-400 border border-rose-500/30 hover:border-rose-500" data-tier="SS">SS</button>
+                    <button onclick="setTierFilter('S')" class="tier-filter-btn px-2.5 py-1 rounded text-xs font-semibold bg-black/40 text-amber-400 border border-amber-500/30 hover:border-amber-500" data-tier="S">S</button>
+                    <button onclick="setTierFilter('A')" class="tier-filter-btn px-2.5 py-1 rounded text-xs font-semibold bg-black/40 text-yellow-300 border border-yellow-500/30 hover:border-yellow-500" data-tier="A">A</button>
+                    <button onclick="setTierFilter('B')" class="tier-filter-btn px-2.5 py-1 rounded text-xs font-semibold bg-black/40 text-purple-300 border border-purple-500/30 hover:border-purple-500" data-tier="B">B</button>
+                    <button onclick="setTierFilter('C')" class="tier-filter-btn px-2.5 py-1 rounded text-xs font-semibold bg-black/40 text-blue-300 border border-blue-500/30 hover:border-blue-500" data-tier="C">C</button>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2 w-full md:w-auto justify-end border-t border-poe-border pt-3 md:pt-0 md:border-t-0">
+                    <button onclick="selectTopTiers()" title="Выбрать SS и S тиры" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-950/40 text-poe-accent border border-poe-accent/40 hover:bg-poe-accent hover:text-black transition-all">
+                        <i class="fa-solid fa-star"></i> Выбрать Top
+                    </button>
+                    <button onclick="clearAllSelections()" title="Сбросить выделения" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-800/60 text-gray-300 border border-gray-700 hover:bg-rose-950/40 hover:text-rose-300 hover:border-rose-800 transition-all">
+                        <i class="fa-solid fa-rotate-left"></i> Сбросить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tier Table Container -->
+            <div class="bg-poe-card border border-poe-border rounded-xl shadow-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-black/60 text-poe-accent border-b border-poe-border font-serif text-xs uppercase tracking-wider">
+                                <th class="p-4 w-16 text-center">Статус</th>
+                                <th class="p-4 w-28">Тир</th>
+                                <th class="p-4 w-52">Руна</th>
+                                <th class="p-4">Тип / Цвет</th>
+                                <th class="p-4">Стратегия и Примечание Fubgun</th>
+                                <th class="p-4 w-24 text-center">Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody id="runeTableBody" class="divide-y divide-poe-border text-sm">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: RUNE CHAIN BUILDER & CALCULATOR -->
+        <section id="tabBuilder" class="space-y-6 hidden">
+            <!-- Builder Overview Banner -->
+            <div class="bg-poe-card border border-poe-border rounded-xl p-5 shadow-lg relative overflow-hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 z-10 relative">
+                    <div>
+                        <h2 class="font-serif text-lg text-poe-accent font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-link"></i> Конструктор Цепочки Рун (1 - 9 Слотов)
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">
+                            Нажимайте на руны из списка снизу, чтобы составить порядок в цепочке Verisium Remnant.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="bg-black/50 border border-poe-border rounded-lg px-4 py-2 text-right">
+                            <span class="text-xs text-gray-400 block">Сила Цепочки</span>
+                            <span id="chainPowerScore" class="text-xl font-bold text-poe-accent">0 / 100</span>
+                        </div>
+                        <button onclick="clearChain()" class="px-3 py-2 bg-rose-950/40 border border-rose-800 text-rose-300 rounded-lg text-xs font-semibold hover:bg-rose-900/60 transition">
+                            <i class="fa-solid fa-trash"></i> Очистить
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chain Visualizer Slots -->
+            <div class="bg-poe-card border border-poe-border rounded-xl p-6 shadow-xl">
+                <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-4 font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group"></i> Текущая последовательность:
+                </h3>
                 
-                if (checkbox.checked) {
-                    row.classList.add('checked-row');
-                    savedStates[id] = true;
-                } else {
-                    row.classList.remove('checked-row');
-                    delete savedStates[id];
+                <div id="chainSlotsContainer" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3">
+                    <!-- 9 Slots Rendered via JS -->
+                </div>
+
+                <!-- Analysis Alert Box -->
+                <div id="chainAnalysisBox" class="mt-6 p-4 rounded-xl border bg-black/40 border-poe-border flex items-start gap-3">
+                    <i id="analysisIcon" class="fa-solid fa-circle-info text-poe-accent text-xl mt-0.5"></i>
+                    <div>
+                        <h4 id="analysisTitle" class="font-semibold text-sm text-poe-accent">Анализ цепочки</h4>
+                        <p id="analysisText" class="text-xs text-gray-300 mt-1 leading-relaxed">Добавьте хотя бы одну руну, чтобы получить рекомендации по крафту и перероллам.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rune Picker Grid -->
+            <div class="bg-poe-card border border-poe-border rounded-xl p-5 shadow-xl">
+                <h3 class="text-xs uppercase tracking-wider text-gray-400 mb-4 font-semibold"> Добавить руну в слот:</h3>
+                <div id="runePickerGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                    <!-- Buttons Rendered via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: STRATEGY & CHEAT SHEET -->
+        <section id="tabGuide" class="space-y-6 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1: Main Strategy Principles -->
+                <div class="bg-poe-card border border-poe-border rounded-xl p-6 shadow-xl space-y-4">
+                    <div class="flex items-center gap-3 border-b border-poe-border pb-3">
+                        <div class="p-2 rounded bg-amber-950/60 border border-poe-accent text-poe-accent">
+                            <i class="fa-solid fa-crown text-lg"></i>
+                        </div>
+                        <h3 class="font-serif text-lg font-bold text-poe-accent">Главные правила Fubgun</h3>
+                    </div>
+                    <ul class="space-y-3 text-xs md:text-sm text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                            <span><b>Opulent Rune — главный приоритет.</b> Если в конце цепочки из 8-9 рун выпадает Opulent, крафт можно считать успешным даже без пролиферации.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                            <span><b>Правило фиолетовых рун (Purple Runes):</b> Фиолетовые руны обладают высшим ценностным потенциалом. Top-3: <i>Power</i>, <i>Death</i>, <i>Bond</i>.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                            <span><b>Синие руны (Rare):</b> Почти всегда уступают фиолетовым, за исключением <b>Rebirth Rune</b> (единственный А-Тир среди синих).</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Reroll Strategy -->
+                <div class="bg-poe-card border border-poe-border rounded-xl p-6 shadow-xl space-y-4">
+                    <div class="flex items-center gap-3 border-b border-poe-border pb-3">
+                        <div class="p-2 rounded bg-purple-950/60 border border-poe-purple text-poe-purple">
+                            <i class="fa-solid fa-dice text-lg"></i>
+                        </div>
+                        <h3 class="font-serif text-lg font-bold text-purple-300">Когда делать Reroll (Переролл)</h3>
+                    </div>
+                    <ul class="space-y-3 text-xs md:text-sm text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-arrows-rotate text-purple-400 mt-1"></i>
+                            <span><b>Короткие цепочки (3–5 рун):</b> Если выпадают B-tier фиолетовые или C-tier синие руны — смело используйте переролл для поиска Power/Death/Bond.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-arrows-rotate text-purple-400 mt-1"></i>
+                            <span><b>Длинные цепочки (7–9 рун):</b> Старайтесь сохранять рецепт, если на нем есть ключевые руны с пролиферацией, но перероллируйте слабые C-Tier позиции в начале.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: Proliferation Explained -->
+                <div class="bg-poe-card border border-poe-border rounded-xl p-6 shadow-xl space-y-4 md:col-span-2">
+                    <div class="flex items-center gap-3 border-b border-poe-border pb-3">
+                        <div class="p-2 rounded bg-blue-950/60 border border-poe-blue text-poe-blue">
+                            <i class="fa-solid fa-network-wired text-lg"></i>
+                        </div>
+                        <h3 class="font-serif text-lg font-bold text-blue-300">Пролиферация и мультипликаторы наград</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-300">
+                        <div class="bg-black/40 border border-poe-border p-3 rounded-lg">
+                            <span class="font-bold text-poe-accent block mb-1">1. Расположение рун</span>
+                            Руны, распространяющие свойства (Proliferation), должны стояться ближе к началу или среди группы фиолетовых рун для максимального покрытия.
+                        </div>
+                        <div class="bg-black/40 border border-poe-border p-3 rounded-lg">
+                            <span class="font-bold text-poe-accent block mb-1">2. Эффект на длинных цепочках</span>
+                            Чем длиннее цепочка (8-9), тем сибельнее экспоненциальный прирост наград при наличии Death/Power/Bond рун.
+                        </div>
+                        <div class="bg-black/40 border border-poe-border p-3 rounded-lg">
+                            <span class="font-bold text-poe-accent block mb-1">3. Страховка от сбойных рун</span>
+                            Даже если 1-2 руны слабой категории попали в длинный рецепт, высокая базовое качество фиолетовых перекрывает потери.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- DATA STRUCTURE ---
+        const RUNES = [
+            {
+                id: 'opulent',
+                name: 'Opulent Rune',
+                tier: 'SS',
+                type: 'Purple (Unique)',
+                typeColor: 'text-purple-400',
+                note: 'Абсолютный топ. Если у вас длинная цепочка из 8-9 рун в конце, и на ней есть Opulent, можно завершать крафт на этом, даже если нет рун на пролиферацию.',
+                score: 35
+            },
+            {
+                id: 'power',
+                name: 'Power Rune',
+                tier: 'S',
+                type: 'Purple',
+                typeColor: 'text-purple-400',
+                note: 'Высший приоритет среди фиолетовых рун. Дает мощный разгон наград.',
+                score: 20
+            },
+            {
+                id: 'death',
+                name: 'Death Rune',
+                tier: 'S',
+                type: 'Purple',
+                typeColor: 'text-purple-400',
+                note: 'Отличная базовая пролиферация и ценность в длинных рецептах.',
+                score: 20
+            },
+            {
+                id: 'bond',
+                name: 'Bond Rune',
+                tier: 'S',
+                type: 'Purple',
+                typeColor: 'text-purple-400',
+                note: 'Входит в топ-3 лучших фиолетовых рун по версии Fubgun.',
+                score: 20
+            },
+            {
+                id: 'time',
+                name: 'Time Rune',
+                tier: 'A',
+                type: 'Purple',
+                typeColor: 'text-purple-400',
+                note: 'Отличный выбор для средних и длинных цепочек.',
+                score: 12
+            },
+            {
+                id: 'oath',
+                name: 'Oath Rune',
+                tier: 'A',
+                type: 'Purple',
+                typeColor: 'text-purple-400',
+                note: 'Хороший промежуточный вариант для закрытия рецептов.',
+                score: 12
+            },
+            {
+                id: 'rebirth',
+                name: 'Rebirth Rune',
+                tier: 'A',
+                type: 'Blue (Rare)',
+                typeColor: 'text-blue-400',
+                note: 'Единственная синяя (Rare) руна, которая заслужила А-тир благодаря своим свойствам.',
+                score: 12
+            },
+            {
+                id: 'other-purple',
+                name: 'Остальные Фиолетовые',
+                tier: 'B',
+                type: 'Purple',
+                typeColor: 'text-purple-400',
+                note: 'Не особо важны. Если у вас короткая цепочка на 3-5 рун, их всегда можно просто переролить (reroll).',
+                score: 5
+            },
+            {
+                id: 'other-blue',
+                name: 'Остальные Синие',
+                tier: 'C',
+                type: 'Blue',
+                typeColor: 'text-blue-400',
+                note: 'Худшие руны. Используйте только при полном отсутствии альтернатив или для закрытия неважных слотов.',
+                score: 2
+            }
+        ];
+
+        // App State
+        let checkedStates = {};
+        let activeTierFilter = 'ALL';
+        let chainList = [];
+
+        // --- LOCAL STORAGE HELPERS ---
+        function loadSavedState() {
+            try {
+                const saved = localStorage.getItem('poe2_fubgun_runes_v2');
+                if (saved) {
+                    checkedStates = JSON.parse(saved);
                 }
-                localStorage.setItem('poe2_fubgun_runes', JSON.stringify(savedStates));
+            } catch (e) {
+                console.error("Failed to load saved states", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('poe2_fubgun_runes_v2', JSON.stringify(checkedStates));
+            } catch (e) {
+                console.error("Failed to save state", e);
+            }
+        }
+
+        // --- TAB NAVIGATION ---
+        function switchTab(tab) {
+            const tabs = ['tierlist', 'builder', 'guide'];
+            tabs.forEach(t => {
+                const sec = document.getElementById(`tab${capitalize(t)}`);
+                const btn = document.getElementById(`tab${capitalize(t)}Btn`);
+                if (t === tab) {
+                    sec.classList.remove('hidden');
+                    btn.className = "flex-1 md:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 bg-poe-accent text-black font-semibold shadow";
+                } else {
+                    sec.classList.add('hidden');
+                    btn.className = "flex-1 md:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 text-gray-400 hover:text-white";
+                }
             });
+        }
+
+        function capitalize(s) {
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        // --- TIER LIST RENDER & FILTER ---
+        function renderTable() {
+            const tbody = document.getElementById('runeTableBody');
+            const searchVal = (document.getElementById('searchInput').value || '').toLowerCase();
+
+            tbody.innerHTML = '';
+
+            RUNES.forEach(rune => {
+                // Apply Tier Filter
+                if (activeTierFilter !== 'ALL' && rune.tier !== activeTierFilter) {
+                    return;
+                }
+
+                // Apply Search Filter
+                const matchSearch = rune.name.toLowerCase().includes(searchVal) || 
+                                    rune.note.toLowerCase().includes(searchVal) ||
+                                    rune.tier.toLowerCase().includes(searchVal);
+                if (!matchSearch) return;
+
+                const isChecked = !!checkedStates[rune.id];
+                const tr = document.createElement('tr');
+                tr.className = `cursor-pointer transition-colors duration-150 border-b border-poe-border/50 hover:bg-white/5 ${isChecked ? 'row-checked' : ''}`;
+                
+                // Tier Badge Style Class
+                let badgeClass = 'badge-c';
+                if (rune.tier === 'SS') badgeClass = 'badge-ss';
+                else if (rune.tier === 'S') badgeClass = 'badge-s';
+                else if (rune.tier === 'A') badgeClass = 'badge-a';
+                else if (rune.tier === 'B') badgeClass = 'badge-b';
+
+                tr.innerHTML = `
+                    <td class="p-4 text-center">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} class="w-4 h-4 accent-emerald-500 rounded cursor-pointer pointer-events-none">
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 rounded text-xs font-bold ${badgeClass}">
+                            ${rune.tier} Tier
+                        </span>
+                    </td>
+                    <td class="p-4 font-bold ${rune.tier === 'SS' ? 'text-rose-400 font-serif' : 'text-gray-200'}">
+                        ${rune.name}
+                    </td>
+                    <td class="p-4 text-xs font-semibold ${rune.typeColor}">
+                        ${rune.type}
+                    </td>
+                    <td class="p-4 text-xs text-gray-300 leading-relaxed">
+                        ${rune.note}
+                    </td>
+                    <td class="p-4 text-center">
+                        <button onclick="event.stopPropagation(); addRuneToChain('${rune.id}')" title="Добавить в конструктор" class="p-1.5 bg-poe-border hover:bg-poe-accent hover:text-black rounded text-xs transition">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </td>
+                `;
+
+                // Row Toggle Handler
+                tr.addEventListener('click', () => {
+                    toggleRuneState(rune.id);
+                });
+
+                tbody.appendChild(tr);
+            });
+
+            if (tbody.children.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-gray-500 text-sm">
+                            Ни одной руны не найдено по вашему запросу.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function toggleRuneState(id) {
+            if (checkedStates[id]) {
+                delete checkedStates[id];
+            } else {
+                checkedStates[id] = true;
+            }
+            saveState();
+            renderTable();
+        }
+
+        function setTierFilter(tier) {
+            activeTierFilter = tier;
+            document.querySelectorAll('.tier-filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-tier') === tier) {
+                    btn.classList.remove('bg-black/40', 'text-gray-300');
+                    btn.classList.add('bg-poe-accent', 'text-black');
+                } else {
+                    btn.classList.add('bg-black/40');
+                    btn.classList.remove('bg-poe-accent', 'text-black');
+                }
+            });
+            renderTable();
+        }
+
+        function filterRunes() {
+            renderTable();
+        }
+
+        function selectTopTiers() {
+            RUNES.forEach(r => {
+                if (r.tier === 'SS' || r.tier === 'S') {
+                    checkedStates[r.id] = true;
+                }
+            });
+            saveState();
+            renderTable();
+        }
+
+        function clearAllSelections() {
+            checkedStates = {};
+            saveState();
+            renderTable();
+        }
+
+        // --- CHAIN BUILDER LOGIC ---
+        function renderBuilderPicker() {
+            const grid = document.getElementById('runePickerGrid');
+            grid.innerHTML = '';
+
+            RUNES.forEach(rune => {
+                let badgeClass = 'badge-c';
+                if (rune.tier === 'SS') badgeClass = 'badge-ss';
+                else if (rune.tier === 'S') badgeClass = 'badge-s';
+                else if (rune.tier === 'A') badgeClass = 'badge-a';
+                else if (rune.tier === 'B') badgeClass = 'badge-b';
+
+                const btn = document.createElement('button');
+                btn.className = "bg-black/40 border border-poe-border hover:border-poe-accent p-3 rounded-lg text-left transition flex flex-col justify-between group";
+                btn.onclick = () => addRuneToChain(rune.id);
+
+                btn.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs px-2 py-0.5 rounded font-bold ${badgeClass}">${rune.tier}</span>
+                        <i class="fa-solid fa-plus text-gray-500 group-hover:text-poe-accent text-xs"></i>
+                    </div>
+                    <span class="font-bold text-xs text-gray-200 group-hover:text-poe-accent line-clamp-1">${rune.name}</span>
+                `;
+                grid.appendChild(btn);
+            });
+        }
+
+        function addRuneToChain(runeId) {
+            if (chainList.length >= 9) {
+                alert("Максимальная длина цепочки — 9 рун.");
+                return;
+            }
+            const rune = RUNES.find(r => r.id === runeId);
+            if (rune) {
+                chainList.push(rune);
+                updateChainUI();
+            }
+        }
+
+        function removeFromChain(index) {
+            chainList.splice(index, 1);
+            updateChainUI();
+        }
+
+        function clearChain() {
+            chainList = [];
+            updateChainUI();
+        }
+
+        function updateChainUI() {
+            const container = document.getElementById('chainSlotsContainer');
+            container.innerHTML = '';
+
+            let totalScore = 0;
+
+            for (let i = 0; i < 9; i++) {
+                const rune = chainList[i];
+                const slotDiv = document.createElement('div');
+
+                if (rune) {
+                    totalScore += rune.score;
+                    let badgeClass = 'badge-c';
+                    if (rune.tier === 'SS') badgeClass = 'badge-ss';
+                    else if (rune.tier === 'S') badgeClass = 'badge-s';
+                    else if (rune.tier === 'A') badgeClass = 'badge-a';
+                    else if (rune.tier === 'B') badgeClass = 'badge-b';
+
+                    slotDiv.className = "relative bg-black/70 border border-poe-border rounded-xl p-3 flex flex-col items-center justify-between text-center min-h-[110px] group shadow-md";
+                    slotDiv.innerHTML = `
+                        <span class="text-[10px] text-gray-500 font-mono absolute top-1.5 left-2">#${i + 1}</span>
+                        <button onclick="removeFromChain(${i})" class="absolute top-1.5 right-1.5 text-gray-500 hover:text-rose-400 text-xs p-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <span class="mt-4 px-2 py-0.5 rounded text-[10px] font-bold ${badgeClass}">${rune.tier} Tier</span>
+                        <span class="font-bold text-xs text-gray-200 mt-1 line-clamp-2">${rune.name}</span>
+                    `;
+                } else {
+                    slotDiv.className = "bg-black/20 border border-dashed border-poe-border/60 rounded-xl p-3 flex flex-col items-center justify-center text-center min-h-[110px]";
+                    slotDiv.innerHTML = `
+                        <span class="text-[10px] text-gray-600 font-mono mb-2">#${i + 1}</span>
+                        <span class="text-xs text-gray-600">Пустой слот</span>
+                    `;
+                }
+
+                container.appendChild(slotDiv);
+            }
+
+            // Cap display score at 100 max
+            const displayScore = Math.min(100, Math.round(totalScore));
+            document.getElementById('chainPowerScore').innerText = `${displayScore} / 100`;
+
+            analyzeChain();
+        }
+
+        function analyzeChain() {
+            const analysisTitle = document.getElementById('analysisTitle');
+            const analysisText = document.getElementById('analysisText');
+            const analysisIcon = document.getElementById('analysisIcon');
+            const analysisBox = document.getElementById('chainAnalysisBox');
+
+            if (chainList.length === 0) {
+                analysisTitle.innerText = "Анализ цепочки";
+                analysisText.innerText = "Добавьте хотя бы одну руну, чтобы получить рекомендации по крафту и перероллам.";
+                analysisIcon.className = "fa-solid fa-circle-info text-poe-accent text-xl mt-0.5";
+                analysisBox.className = "mt-6 p-4 rounded-xl border bg-black/40 border-poe-border flex items-start gap-3";
+                return;
+            }
+
+            const hasOpulent = chainList.some(r => r.id === 'opulent');
+            const sTierCount = chainList.filter(r => r.tier === 'S').length;
+            const cTierCount = chainList.filter(r => r.tier === 'C').length;
+
+            if (hasOpulent && chainList.length >= 7) {
+                analysisTitle.innerText = "Отличная длинная цепочка! (Opulent Rune)";
+                analysisText.innerText = "По гайду Fubgun: в цепочках из 8-9 рун наличие Opulent Rune в конце полностью окупает крафт. Можно завершать без сомнений!";
+                analysisIcon.className = "fa-solid fa-circle-check text-emerald-400 text-xl mt-0.5";
+                analysisBox.className = "mt-6 p-4 rounded-xl border bg-emerald-950/30 border-emerald-800/60 flex items-start gap-3";
+            } else if (chainList.length <= 5 && cTierCount >= 2) {
+                analysisTitle.innerText = "Рекомендуется Переролл (Reroll)";
+                analysisText.innerText = "В короткой цепочке (3-5 рун) присутствуют C-Tier синие руны. Fubgun рекомендует перероллить эти слоты для поиска Power / Death / Bond.";
+                analysisIcon.className = "fa-solid fa-triangle-exclamation text-amber-400 text-xl mt-0.5";
+                analysisBox.className = "mt-6 p-4 rounded-xl border bg-amber-950/30 border-amber-800/60 flex items-start gap-3";
+            } else if (sTierCount >= 2) {
+                analysisTitle.innerText = "Высокий потенциал наград";
+                analysisText.innerText = "Отличный баланс фиолетовых S-Tier рун (Power/Death/Bond). Убедитесь, что руны на пролиферацию стоят в эффективных слотах.";
+                analysisIcon.className = "fa-solid fa-bolt text-poe-accent text-xl mt-0.5";
+                analysisBox.className = "mt-6 p-4 rounded-xl border bg-poe-accent/10 border-poe-accent/40 flex items-start gap-3";
+            } else {
+                analysisTitle.innerText = "Средний потенциал рецепта";
+                analysisText.innerText = "Рецепт жизнеспособен, но для длинных рецептов (8-9 рун) желательно стремиться к поиску Opulent Rune или комбинации Power + Death.";
+                analysisIcon.className = "fa-solid fa-circle-info text-blue-400 text-xl mt-0.5";
+                analysisBox.className = "mt-6 p-4 rounded-xl border bg-blue-950/30 border-blue-800/60 flex items-start gap-3";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedState();
+            renderTable();
+            renderBuilderPicker();
+            updateChainUI();
         });
-    });
-</script>
+    </script>
 </body>
 </html>
